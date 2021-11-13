@@ -29,11 +29,12 @@ public class AcceptableTest {
         /*
          * the following needs instantiation
          */
-        final Acceptable<Integer> acc = null;
+        final Acceptable<Integer> acc = new OneListAcceptable<Integer>(list);
         final Acceptor<Integer> acceptor = acc.acceptor();
         for (final Integer el: list) {
             acceptor.accept(el);
         }
+        //acceptor.accept(-1);
         acceptor.end();
     }
 
@@ -47,23 +48,25 @@ public class AcceptableTest {
          * Failing acceptance
          */
         final List<Integer> list = Arrays.asList(10, 20, 30, 40);
-        final Acceptable<Integer> acc = null;
+        final Acceptable<Integer> acc = new OneListAcceptable<Integer>(list);
         final Acceptor<Integer> acceptor = acc.acceptor();
         try {
             for (final Integer el: list) {
                 acceptor.accept(el);
             }
+          //  acceptor.accept(list.get(0));
         } catch (Acceptor.ElementNotAcceptedException e) {
             // test failed: sequence is not accepted
             fail("Element out of sequence: " + e.getElement());
         }
         try {
             // makes an exception to be raised;
-            acceptor.accept(-1);
+            acceptor.accept(50);
             // assert: impossible to get here with a wrong element
             fail("Element out of sequence");
         } catch (Acceptor.ElementNotAcceptedException e) {
             // true because test has succeed: 50 not accepted
+            System.out.println(e.getElement());
             assertNotNull(e);
         }
     }
@@ -79,10 +82,11 @@ public class AcceptableTest {
          * Exception due to early end
          */
         final List<Integer> list = Arrays.asList(10, 20, 30, 40);
-        final Acceptable<Integer> acc = null;
+        final Acceptable<Integer> acc = new OneListAcceptable<Integer>(list);
         final Acceptor<Integer> acceptor = acc.acceptor();
         try {
             acceptor.accept(10);
+            
         } catch (Acceptor.ElementNotAcceptedException e) {
             fail("No element expected: " + e.getElement());
         }
@@ -90,6 +94,7 @@ public class AcceptableTest {
             acceptor.end();
             fail("More elements were expected!");
         } catch (Acceptor.EndNotAcceptedException e) {
+            System.out.println(e.getMessage());
             assertNotNull(e);
         }
     }
